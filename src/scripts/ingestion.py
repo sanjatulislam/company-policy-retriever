@@ -11,7 +11,7 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from utilities.utils import get_data_dir_path
-from utilities.constants import WEAVIATE_TEXT_KEY
+from utilities.constants import WEAVIATE_TEXT_KEY, EMBEDDING_MODEL
 
 load_dotenv()
 
@@ -68,9 +68,9 @@ def update_chunk_metadata(chunks):
 
 
 
-def store_documents(chunks, should_delete_previous_data=True, embedding_model="BAAI/bge-m3"):
+def store_documents(chunks, should_delete_previous_data=True):
     embeddings = HuggingFaceEmbeddings(
-        model_name=embedding_model,
+        model_name=EMBEDDING_MODEL,
         encode_kwargs={"normalize_embeddings": True}
     )
 
