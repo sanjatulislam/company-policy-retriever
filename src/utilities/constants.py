@@ -1,0 +1,1 @@
+WEAVIATE_TEXT_KEY="content"
