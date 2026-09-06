@@ -68,6 +68,8 @@ def retrieve(query):
 
     results = cohere_retriever.invoke(query)
 
+    # TODO: Implement mechanism to display relevance scores for reranked documents
+
     weaviate_client.close()
 
     return results
