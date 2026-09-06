@@ -60,6 +60,9 @@ def get_rerank_retriever(retriever):
 
 
 def retrieve(query):
+    # TODO: Implement query analyzer/decomposer to split multi-topic questions
+    # into focused sub-queries for retrieval
+
     weaviate_client, retriever = get_retriever()
     cohere_retriever = get_rerank_retriever(retriever)
 
