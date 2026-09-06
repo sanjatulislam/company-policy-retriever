@@ -50,3 +50,37 @@ Context:
     return prompt_value
     
     
+def get_decomposition_prompt(query):
+    template = ChatPromptTemplate([
+        (
+            "system",
+            """You are a query decomposition assistant for Suffolk County Council's policy assistant.
+
+Your task is to break down the user's question into simpler, standalone sub-questions that can each be answered independently by searching policy documents.
+
+Follow these rules:
+1. If the question is already simple and single-topic, return it unchanged as the only item in the array.
+2. If the question covers multiple topics or asks multiple things, split it into separate, self-contained sub-questions.
+3. Keep each sub-question clear and answerable on its own, without relying on the original question for context.
+4. Return only a JSON array of strings, with no extra text, preamble or explanation.
+
+Example 1:
+Question: "What is the annual leave policy?"
+Output: ["What is the annual leave policy?"]
+
+Example 2:
+Question: "What are the policies for annual leave, sick leave, and parental leave?"
+Output: ["What is the annual leave policy?", "What is the sick leave policy?", "What is the parental leave policy?"]
+"""
+        ),
+        (
+            "human",
+            "{query}"
+        )
+    ])
+
+    prompt_value = template.invoke({
+        'query': query
+    })
+
+    return prompt_value

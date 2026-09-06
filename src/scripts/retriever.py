@@ -46,10 +46,16 @@ def get_retriever():
     return client, retriever
 
 
-def get_rerank_retriever(retriever):
+def get_rerank_compressor():
     compressor = CohereRerank(cohere_api_key=os.environ['COHERE_API_KEY'], 
-                              model=COHERE_RERANK_MODEL, 
-                              top_n=COHERE_TOP_N)
+                                  model=COHERE_RERANK_MODEL, 
+                                  top_n=COHERE_TOP_N)
+
+    return compressor
+
+
+def get_rerank_compressor_retriever(retriever):
+    compressor = get_rerank_compressor()
 
     compression_retriever = ContextualCompressionRetriever(
         base_compressor=compressor, 
@@ -59,19 +65,56 @@ def get_rerank_retriever(retriever):
     return compression_retriever
 
 
-def retrieve(query):
+def retrieve_query(query):
+    """ Single-query retrieval """
+
     # TODO: Implement query analyzer/decomposer to split multi-topic questions
     # into focused sub-queries for retrieval
 
     weaviate_client, retriever = get_retriever()
-    cohere_retriever = get_rerank_retriever(retriever)
+    cohere_retriever = get_rerank_compressor_retriever(retriever)
 
     results = cohere_retriever.invoke(query)
-
-    # TODO: Implement mechanism to display relevance scores for reranked documents
 
     weaviate_client.close()
 
     return results
 
+
+def deduplicate(documents):
+    seen = set()
+    unique_docs = []
     
+    for doc in documents:
+        chunk_id = doc.metadata.get("chunk_id")
+
+        if chunk_id is None:
+            unique_docs.append(doc)
+            continue
+
+        if chunk_id not in seen:
+            unique_docs.append(doc)
+            seen.add(chunk_id)
+
+    return unique_docs
+
+
+def retrieve_queries(original_query, sub_queries):
+    """ Decomposed retrieval """
+
+    weaviate_client, retriever = get_retriever()
+    all_docs = []
+
+    for query in sub_queries:
+        docs = retriever.invoke(query)
+        all_docs.extend(docs)
+
+    unique_docs = deduplicate(all_docs)
+
+    cohere_compressor = get_rerank_compressor()
+
+    results = cohere_compressor.compress_documents(unique_docs, original_query)
+
+    weaviate_client.close()
+
+    return results

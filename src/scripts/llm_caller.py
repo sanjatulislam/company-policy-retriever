@@ -19,7 +19,6 @@ llm = ChatGroq(
         temperature=GENERATION_TEMPERATURE
     )
 
-
-def get_llm_response(prompt_value):
+def get_response(prompt_value):
     response = llm.invoke(prompt_value)
     return response
