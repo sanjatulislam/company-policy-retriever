@@ -96,11 +96,11 @@ def store_documents(chunks, should_delete_previous_data=True):
     client.close()
 
 
-def run_ingestion_pipeline(should_delete_previous_data=True, embedding_model="BAAI/bge-m3"):
+def run_ingestion_pipeline(should_delete_previous_data=True):
     documents = load_documents()
     chunks = chunk_documents(documents)
     chunks = update_chunk_metadata(chunks)
-    store_documents(chunks, should_delete_previous_data=should_delete_previous_data, embedding_model=embedding_model)
+    store_documents(chunks, should_delete_previous_data=should_delete_previous_data)
 
 
 if __name__ == "__main__":

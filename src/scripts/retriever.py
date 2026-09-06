@@ -6,14 +6,18 @@ from weaviate.classes.init import Auth
 from langchain_weaviate import WeaviateVectorStore
 from langchain_huggingface import HuggingFaceEmbeddings
 
-from src.utilities.constants import EMBEDDING_MODEL, WEAVIATE_TEXT_KEY, TOP_K
+from src.utilities.constants import EMBEDDING_MODEL, WEAVIATE_TEXT_KEY, TOP_K, EMBEDDING_MODEL_QUERY_INSTRUCTION
 
 load_dotenv()
 
 def get_retriever():
     embeddings = HuggingFaceEmbeddings(
         model_name=EMBEDDING_MODEL,
-        encode_kwargs={"normalize_embeddings": True}
+        encode_kwargs={"normalize_embeddings": True},
+        query_encode_kwargs={
+            "prompt": EMBEDDING_MODEL_QUERY_INSTRUCTION,
+            "normalize_embeddings": True,
+        },
     )
 
     client = weaviate.connect_to_weaviate_cloud(
