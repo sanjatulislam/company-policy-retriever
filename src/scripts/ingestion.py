@@ -16,7 +16,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from utilities.utils import get_data_dir_path
-from utilities.constants import WEAVIATE_TEXT_KEY, EMBEDDING_MODEL
+from utilities.constants import WEAVIATE_TEXT_KEY, EMBEDDING_MODEL, SPLITTER_CHUNK_SIZE, SPLITTER_CHUNK_OVERLAP
 
 load_dotenv()
 
@@ -35,7 +35,7 @@ def load_documents():
     return documents
 
 
-def chunk_documents(documents, chunk_size=500, chunk_overlap=100):
+def chunk_documents(documents, chunk_size=SPLITTER_CHUNK_SIZE, chunk_overlap=SPLITTER_CHUNK_OVERLAP):
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=chunk_size,
         chunk_overlap=chunk_overlap
