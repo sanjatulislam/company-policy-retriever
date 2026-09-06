@@ -10,6 +10,11 @@ from langchain_core.documents import Document
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
 from utilities.utils import get_data_dir_path
 from utilities.constants import WEAVIATE_TEXT_KEY, EMBEDDING_MODEL
 
