@@ -2,7 +2,7 @@
 
 An advanced Retrieval-Augmented Generation (RAG) system for answering questions about company policies using retrieved policy documents as the source of truth.
 
-The system combines context-aware query decomposition, hybrid retrieval, document reranking, deduplication and grounded LLM generation to improve retrieval relevance and reduce unsupported responses.
+The system combines context-aware query decomposition, semantic retrieval, document reranking, deduplication and grounded LLM generation to improve retrieval relevance and reduce unsupported responses.
 
 ## RAG pipeline
 
