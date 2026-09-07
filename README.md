@@ -78,5 +78,8 @@ The system combines context-aware query decomposition, semantic retrieval, docum
 - The results were assessed using: Manual evaluation and LLM-as-a-judge evaluation
 - he evaluation focuses on aspects such as: Retrieval relevance, Answer correctness, Context grounding, Handling of unsupported questions, Cross-document reasoning
 
+## Key Takeaways
+Context-aware query decomposition improved retrieval quality and resulted in better responses than plain-query RAG in our evaluation. By decomposing complex queries into focused sub-queries and reranking the retrieved documents, the system retrieved more relevant evidence for the final LLM generation.
+
 ## Technology Stack
 Python, LangChain, Weaviate, Hugging Face Embeddings, Semantic Retrieval, Cohere Rerank, Groq
