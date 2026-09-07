@@ -22,15 +22,15 @@ def format_context(documents):
     return context
 
 
-def get_rag_prompt(query, context):
+def get_rag_prompt(query, context, fallback_response):
     template = ChatPromptTemplate(
         [
             (
                 "system",
                 """You are Suffolk County Council's policy assistant. Your role is to answer questions strictly using the policy documents provided in the context below.
-Read the context carefully and base your answer only on information explicitly stated there.
-Keep the answer concise and factual. If the context only partially answers the question, share what is supported by the context and clearly state which parts are not covered.
-If the context does not contain relevant information, respond exactly with: 'I could not find the answer in the provided documents.'
+Read the context carefully and base your answer only on information explicitly stated there. Keep the answer concise and factual.
+If the context only partially answers the question, share what is supported by the context and clearly state which parts are not covered.
+If the context does not contain relevant information needed to answer the question, respond exactly with: '{fallback_response}'
 
 Context:
 {context}"""
@@ -44,7 +44,8 @@ Context:
 
     prompt_value = template.invoke({
         "context": context,
-        "query": query
+        "query": query,
+        "fallback_response": fallback_response
     })
 
     return prompt_value

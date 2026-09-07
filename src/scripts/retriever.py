@@ -46,10 +46,10 @@ def get_retriever():
     return client, retriever
 
 
-def get_rerank_compressor():
+def get_rerank_compressor(reranking_top_n=COHERE_TOP_N):
     compressor = CohereRerank(cohere_api_key=os.environ['COHERE_API_KEY'], 
                               model=COHERE_RERANK_MODEL, 
-                              top_n=COHERE_TOP_N)
+                              top_n=reranking_top_n)
 
     return compressor
 
@@ -95,14 +95,16 @@ def deduplicate(documents):
     return unique_docs
 
 
-def retrieve_rag_contexts(sub_queries):
+def retrieve_rag_contexts(sub_queries, 
+                          should_print_ranking_score=False, 
+                          reranking_top_n=COHERE_TOP_N):
     weaviate_client, retriever = get_retriever()
     all_docs = []
 
     try:
         for query in sub_queries:
             docs = retriever.invoke(query)
-            ranked_docs = rerank_documents(query, docs)
+            ranked_docs = rerank_documents(query, docs, should_print_ranking_score, reranking_top_n)
             all_docs.extend(ranked_docs)
 
         unique_docs = deduplicate(all_docs)
@@ -113,8 +115,11 @@ def retrieve_rag_contexts(sub_queries):
         weaviate_client.close()
 
 
-def rerank_documents(query, documents, should_print_score=False):
-    compressor = get_rerank_compressor()
+def rerank_documents(query, 
+                     documents, 
+                     should_print_score=False, 
+                     reranking_top_n=COHERE_TOP_N):
+    compressor = get_rerank_compressor(reranking_top_n)
     docs = compressor.compress_documents(documents=documents, query=query)
 
     if should_print_score:
