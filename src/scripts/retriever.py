@@ -65,17 +65,16 @@ def get_rerank_compressor_retriever(retriever):
     return compression_retriever
 
 
-def retrieve_query(query):
-    """ Single-query retrieval """
-
+def retrieve_initial_context(query):
     weaviate_client, retriever = get_retriever()
-    cohere_retriever = get_rerank_compressor_retriever(retriever)
 
-    results = cohere_retriever.invoke(query)
+    try:
+        response = retriever.invoke(query)
 
-    weaviate_client.close()
+        return response
 
-    return results
+    finally:
+        weaviate_client.close()
 
 
 def deduplicate(documents):
@@ -96,30 +95,32 @@ def deduplicate(documents):
     return unique_docs
 
 
-def retrieve_queries(original_query, sub_queries, should_print_reranking_score=False):
-    """ Decomposed retrieval """
-
+def retrieve_rag_contexts(sub_queries):
     weaviate_client, retriever = get_retriever()
     all_docs = []
 
     try:
         for query in sub_queries:
             docs = retriever.invoke(query)
-            all_docs.extend(docs)
+            ranked_docs = rerank_documents(query, docs)
+            all_docs.extend(ranked_docs)
 
         unique_docs = deduplicate(all_docs)
 
-        cohere_compressor = get_rerank_compressor()
-
-        results = cohere_compressor.compress_documents(unique_docs, original_query)
-
-        if should_print_reranking_score:
-            print(f"\n--- Reranked results ({len(results)}) ---")
-            for i, doc in enumerate(results):
-                score = doc.metadata.get('relevance_score', 'N/A')
-                print(f"{i+1}. [{score}] {doc.metadata.get('chunk_id')}: {doc.page_content[:100]}...")
-
-        return results
+        return unique_docs
 
     finally:
         weaviate_client.close()
+
+
+def rerank_documents(query, documents, should_print_score=False):
+    compressor = get_rerank_compressor()
+    docs = compressor.compress_documents(documents=documents, query=query)
+
+    if should_print_score:
+        print(f"\n--- Reranked results ({len(docs)}) ---")
+        for i, doc in enumerate(docs):
+            score = doc.metadata.get('relevance_score', 'N/A')
+            print(f"{i+1}. [{score}] {doc.metadata.get('chunk_id')}: {doc.page_content[:100]}...")
+
+    return docs

@@ -9,7 +9,7 @@ EMBEDDING_MODEL="BAAI/bge-base-en-v1.5"
 EMBEDDING_MODEL_QUERY_INSTRUCTION="Represent this sentence for searching relevant passages:"
 
 COHERE_RERANK_MODEL = "rerank-v3.5"
-COHERE_TOP_N=5
+COHERE_TOP_N=4
 
 GENERATION_LLM="Qwen/Qwen3.8-27B"
 GENERATION_TEMPERATURE=0.3
