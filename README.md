@@ -1,4 +1,4 @@
-### Company Policy RAG Assistant
+# Company Policy RAG Assistant
 
 An advanced Retrieval-Augmented Generation (RAG) system for answering questions about company policies using retrieved policy documents as the source of truth.
 
