@@ -16,4 +16,4 @@ def get_decomposed_queries(query):
     prompt_value = get_decomposition_prompt(query)
     response = get_response(prompt_value)
 
-    return response
+    return response.content

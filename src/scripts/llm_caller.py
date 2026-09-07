@@ -8,7 +8,7 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from utilities.constants import GENERATION_LLM, GENERATION_TEMPERATURE
+from utilities.constants import GENERATION_LLM, GENERATION_TEMPERATURE, GENERATION_LLM_MAX_TOKENS
 
 
 load_dotenv()
@@ -16,6 +16,7 @@ load_dotenv()
 llm = ChatGroq(
         model=GENERATION_LLM,
         api_key=os.environ['GROQ_API_KEY'],
+        max_tokens=GENERATION_LLM_MAX_TOKENS,
         temperature=GENERATION_TEMPERATURE
     )
 

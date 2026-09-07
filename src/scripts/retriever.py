@@ -48,8 +48,8 @@ def get_retriever():
 
 def get_rerank_compressor():
     compressor = CohereRerank(cohere_api_key=os.environ['COHERE_API_KEY'], 
-                                  model=COHERE_RERANK_MODEL, 
-                                  top_n=COHERE_TOP_N)
+                              model=COHERE_RERANK_MODEL, 
+                              top_n=COHERE_TOP_N)
 
     return compressor
 
@@ -67,9 +67,6 @@ def get_rerank_compressor_retriever(retriever):
 
 def retrieve_query(query):
     """ Single-query retrieval """
-
-    # TODO: Implement query analyzer/decomposer to split multi-topic questions
-    # into focused sub-queries for retrieval
 
     weaviate_client, retriever = get_retriever()
     cohere_retriever = get_rerank_compressor_retriever(retriever)
@@ -99,22 +96,30 @@ def deduplicate(documents):
     return unique_docs
 
 
-def retrieve_queries(original_query, sub_queries):
+def retrieve_queries(original_query, sub_queries, should_print_reranking_score=False):
     """ Decomposed retrieval """
 
     weaviate_client, retriever = get_retriever()
     all_docs = []
 
-    for query in sub_queries:
-        docs = retriever.invoke(query)
-        all_docs.extend(docs)
+    try:
+        for query in sub_queries:
+            docs = retriever.invoke(query)
+            all_docs.extend(docs)
 
-    unique_docs = deduplicate(all_docs)
+        unique_docs = deduplicate(all_docs)
 
-    cohere_compressor = get_rerank_compressor()
+        cohere_compressor = get_rerank_compressor()
 
-    results = cohere_compressor.compress_documents(unique_docs, original_query)
+        results = cohere_compressor.compress_documents(unique_docs, original_query)
 
-    weaviate_client.close()
+        if should_print_reranking_score:
+            print(f"\n--- Reranked results ({len(results)}) ---")
+            for i, doc in enumerate(results):
+                score = doc.metadata.get('relevance_score', 'N/A')
+                print(f"{i+1}. [{score}] {doc.metadata.get('chunk_id')}: {doc.page_content[:100]}...")
 
-    return results
+        return results
+
+    finally:
+        weaviate_client.close()
