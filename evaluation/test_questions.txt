@@ -1,0 +1,60 @@
+1. Single-fact retrieval (one doc, one clear answer)
+
+ - What is the definition of RED level information?
+ - How long after leaving SCC is an employee's email account content deleted?
+ - What is the maximum number of days SCC has to respond to a Subject Access Request?
+ - Who holds the role of Senior Information Risk Owner (SIRO) at SCC?
+ - Within how many hours must a WhatsApp business communication be transferred to a case management system?
+ - What countries can staff take an SCC-provided laptop to for work purposes?
+ - How often must staff complete mandatory data protection training?
+
+Expected: single, confident, correctly-cited answer from one document.
+
+
+****************************************************************************************************************
+
+
+2. Cross-document synthesis (answer spans 2+ docs)
+
+Tests whether retrieval pulls chunks from multiple sources and generation combines them coherently — hardest and most useful tier.
+
+ - How does SCC's Privacy by Design approach relate to its requirements for remote working with RED-level information? 
+ - How does the Information Security Policy's incident reporting process relate to the specific incident-reporting steps for lost devices in the Acceptable Use Policy?
+ - How do the RED/AMBER/GREEN classification definitions in the Data Protection Policy compare to those in the Acceptable Use Policy — are they consistent?
+ - Which SCC role is responsible for both data protection compliance and reviewing DPIAs, and how does this connect to the AI product approval process?
+ - How does the Information Security Policy's risk assessment process (DPIA) relate to the DPIA requirement mentioned for information sharing in the Data Protection Policy?
+
+
+Expected: answer draws from multiple chunks, a good system should not say 'not found' if content exists split across documents.
+
+
+*******************************************************************************************
+
+
+3. Chunk-boundary stress tests
+
+Given chunk_size=850/overlap=150, some answers may be split mid-list or mid-clause. These test whether retrieval + reassembly still produces a complete answer.
+
+ - What are the required actions when an employee loses a laptop containing RED-classified personal data?
+ - List all the steps involved in the WhatsApp de-registration and data transfer process.
+ - What is the full list of content considered 'inappropriate' for staff to access or store on SCC IT facilities?
+ - What are all the responsibilities of a Strategic Information Agent (SIA) across the policies?
+ - Summarize every step in SCC's process for handling a security incident caused by staff misuse.
+
+Expected: complete list preserved, nothing silently truncated mid-bullet.
+
+
+*****************************************************************************************
+
+
+4. Negative / out-of-scope (should trigger fallback response)
+
+Tests whether the system correctly says "I could not find the answer" instead of hallucinating.
+
+ - What is SCC's policy on using personal drones for work purposes?
+ - How much annual leave are Suffolk County Council employees entitled to?
+ - What is the process for requesting a company car?
+ - Does SCC allow staff to use TikTok for official council communications?
+ - What is the penalty under GDPR for a data breach affecting EU citizens outside the UK?
+
+Expected: exact fallback string, no fabricated policy detail.
